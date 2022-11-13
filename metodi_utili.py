@@ -5,10 +5,14 @@ import numpy as np
 import itertools
 import pandas as pd
 from sklearn import metrics
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.model_selection import train_test_split
 from tensorflow import keras
 from keras import layers
 from keras import activations
+import time
+from sklearn.ensemble import RandomForestClassifier
+
 
 #Method used to plot the histogram of the target features
 def histogram(x, title):
@@ -86,6 +90,24 @@ def LSTM_model(data_X):
     model.summary()
     return model
 
+'''###########################################################################################'''
+
+# Choosing the best architecture for Random Forest Classifier
+def RandomForestArchitecture(data_X, y_train):
+
+    X_train, X_test, y_train, y_test = train_test_split(data_X, y_train,
+                                                        random_state=42, train_size=0.8)
+    n_estimator_range = [10, 30, 50, 100, 200, 300, 500, 1000]
+    for x in n_estimator_range:
+        start = time.time()
+        forest = RandomForestClassifier(n_estimators=x)
+        forest.fit(X_train, y_train)
+        y_pred_test = forest.predict(X_test)
+        acc = accuracy_score(y_test, y_pred_test)
+        end = time.time()
+        print("The accuracy with ", x, " estimators is: ", acc, " computed in ", round(end - start, 3), "s\n")
+
+'''###########################################################################################'''
 
 def LSTM_application(model, kfold, ros, data, data_X, y_train):
     '''
@@ -138,6 +160,8 @@ def LSTM_application(model, kfold, ros, data, data_X, y_train):
 
     return oos_pred,y_eval,pred
 
+'''###########################################################################################'''
+
 def RandomForest_Model(clf,kfold, ros, data, data_X, y_train):
     oos_pred=[]
     for train_index, test_index in kfold.split(data_X, y_train):
@@ -179,6 +203,7 @@ def RandomForest_Model(clf,kfold, ros, data, data_X, y_train):
 
     return oos_pred,y_eval, pred
 
+'''###########################################################################################'''
 
 #Method used for the plot of confusion matrix
 def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=None, normalize=True):
@@ -216,6 +241,8 @@ def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=None,
     plt.ylabel('True label')
     plt.xlabel('Predicted label\naccuracy={:0.4f}; misclass={:0.4f}'.format(accuracy, misclass))
     plt.show()
+
+'''###########################################################################################'''
 
 def precision(label, confusion_matrix):
     col = confusion_matrix[:, label]

@@ -1,10 +1,15 @@
 import pandas as pd
+import seaborn as sns
+import numpy as np
+from matplotlib import pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import RandomOverSampler
 import metodi_utili
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.ensemble import RandomForestClassifier
 
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import time
 
 # Reading the dataset
 train_data = pd.read_csv('data/UNSW_NB15_training-set.csv')
@@ -77,30 +82,28 @@ data_X = data.drop(["Class"],axis=1)
 ros = RandomOverSampler(sampling_strategy='minority')
 
 k_value = 2
-kfold = StratifiedKFold(n_splits=k_value, shuffle=True, random_state=42) # MOD: was 6 split
+kfold = StratifiedKFold(n_splits=k_value, shuffle=True, random_state=42)
 kfold.get_n_splits(data_X,y_train)
-print(kfold)
 
-model = metodi_utili.LSTM_model(data_X)
-
-#Inizializing RandomForestClassifier
-clf = RandomForestClassifier(n_estimators=100)
+#Choose of Random Forest architecture
+#metodi_utili.RandomForestArchitecture(data_X, y_train)
 
 loop = True
 while loop:
     choose = input("Insert: \n\t1) LSTM Model\n\t2) Random Forest Classifier\n\n\t--> ")
     if choose == "1":
-        oos_pred, y_eval, pred = metodi_utili.LSTM_application(model, kfold, ros, data, data_X, y_train)
-        metodi_utili.show_confusion_matrix(y_eval,pred, "Confusion Matrix LSTM Model")
+          model = metodi_utili.LSTM_model(data_X)
+          oos_pred, y_eval, pred = metodi_utili.LSTM_application(model, kfold, ros, data, data_X, y_train)
+          metodi_utili.show_confusion_matrix(y_eval,pred, "Confusion Matrix LSTM Model")
 
     elif choose == "2":
-        oos_pred, y_eval, pred = metodi_utili.RandomForest_Model(clf,kfold, ros, data, data_X, y_train)
-        metodi_utili.show_confusion_matrix(y_eval, pred,"Confusion Matrix Random Forest Classifier")
+          # Inizializing RandomForestClassifier
+          clf = RandomForestClassifier(n_estimators=500)
+          oos_pred, y_eval, pred = metodi_utili.RandomForest_Model(clf,kfold, ros, data, data_X, y_train)
+          metodi_utili.show_confusion_matrix(y_eval, pred,"Confusion Matrix Random Forest Classifier")
 
     scelta = input("Do you wanna do another classification? \ny or n?\n--> ")
     if scelta != "y":
         loop = False
-
-
 
 
