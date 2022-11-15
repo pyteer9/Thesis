@@ -126,9 +126,10 @@ def LSTM_application(model, kfold, ros, data, data_X, y_train):
         print("train index:", train_index)
         print("test index:", test_index)
         print(train_y.value_counts())
-
+        #histogram(train_y, "Attack Distribution")
         train_X_over, train_y_over = ros.fit_resample(train_X, train_y)
         print(train_y_over.value_counts())
+        #histogram(train_y_over, "Attack Distribution after Resampling")
 
         x_columns_train = data.columns.drop('Class')
         x_train_array = train_X_over[x_columns_train].values
@@ -148,7 +149,7 @@ def LSTM_application(model, kfold, ros, data, data_X, y_train):
         #num_classes = len(outcomes_test)
         y_test_2 = dummies_test.values
 
-        model.fit(x_train_1, y_train_1, validation_data=(x_test_2, y_test_2), epochs=1)  # MOD: was 9 epochs
+        model.fit(x_train_1, y_train_1, validation_data=(x_test_2, y_test_2), epochs=3)  # MOD: was 9 epochs
 
         pred = model.predict(x_test_2)
         pred = np.argmax(pred, axis=1)
