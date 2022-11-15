@@ -92,15 +92,16 @@ loop = True
 while loop:
     choose = input("Insert: \n\t1) LSTM Model\n\t2) Random Forest Classifier\n\n\t--> ")
     if choose == "1":
+
           model = metodi_utili.LSTM_model(data_X)
           oos_pred, y_eval, pred = metodi_utili.LSTM_application(model, kfold, ros, data, data_X, y_train)
-          metodi_utili.show_confusion_matrix(y_eval,pred, "Confusion Matrix LSTM Model")
+          metodi_utili.show_confusion_matrix(y_eval,pred, "Confusion Matrix LSTM Model", "LSTM method")
 
     elif choose == "2":
           # Inizializing RandomForestClassifier
-          clf = RandomForestClassifier(n_estimators=500)
+          clf = RandomForestClassifier(n_estimators=10)
           oos_pred, y_eval, pred = metodi_utili.RandomForest_Model(clf,kfold, ros, data, data_X, y_train)
-          metodi_utili.show_confusion_matrix(y_eval, pred,"Confusion Matrix Random Forest Classifier")
+          metodi_utili.show_confusion_matrix(y_eval, pred,"Confusion Matrix Random Forest Classifier", "Random Forest Classification method")
 
     scelta = input("Do you wanna do another classification? \ny or n?\n--> ")
     if scelta != "y":

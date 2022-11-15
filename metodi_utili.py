@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from matplotlib import colors
-from matplotlib.ticker import PercentFormatter
 import numpy as np
 import itertools
 import pandas as pd
@@ -274,7 +273,7 @@ def recall_macro_average(confusion_matrix):
 Generating the confusion matrix
 ##############################################################
 '''
-def show_confusion_matrix(y_eval,pred, title):
+def show_confusion_matrix(y_eval,pred, title, method):
     confussion_matrix = confusion_matrix(y_eval, pred, labels=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     plot_confusion_matrix(cm=confussion_matrix,
                                        normalize=False,
@@ -283,5 +282,45 @@ def show_confusion_matrix(y_eval,pred, title):
                                        title=title)
 
     print("\nLabel Precision Recall")
+    prec=[]
+    rec=[]
     for label in range(10):
+        prec.append(round(precision(label, confussion_matrix),3))
+        rec.append(round(recall(label,confussion_matrix),3))
         print(f"{label:5d} {precision(label, confussion_matrix):9.3f} {recall(label, confussion_matrix):6.3f}")
+
+    prec_rec_hist(prec, "Precision Attack categories for "+method+"\n","Precision")
+    prec_rec_hist(rec, "Recall Attack categories for "+method+"\n","Recall")
+
+def addlabels(x,y):
+    for i in range(len(x)):
+        #plt.text(i, y[i]*0.9, y[i], ha = 'center', color="white", weight='bold')
+        plt.text(i, y[i]*0.9, y[i], ha = 'center', color='white', weight='bold',
+                bbox=dict(facecolor='#251e3e', edgecolor='#251e3e', boxstyle='round',linewidth=2))
+
+def prec_rec_hist(dati,title,ylab):
+
+    labels = ['Analysis', 'Backdoor', 'DoS', 'Exploits', 'Fuzzers', 'Generic','Normal', 'Reconnaissance', 'Shellcode', 'Worms']
+    dati = np.array(dati)
+
+    plt.figure(figsize=(35, 15))
+    #ax = plt.axes()
+    #ax.set_facecolor("#DCDCDC")
+
+    plt.rcParams.update({'font.size': 22})
+    plt.rcParams["font.weight"] = "bold"
+    plt.rcParams["axes.labelweight"] = "bold"
+
+    plt.grid(b=True, color='grey',
+             linestyle='-.', linewidth=0.5,
+             alpha=0.6)
+    plt.xticks(range(10))
+    plt.bar(labels, dati, align='center', color="#651e3e") #451e3e
+    addlabels(labels,dati)
+
+    plt.xlabel('\n\nAttack Category')
+    ylabel=ylab+"\n"
+    plt.ylabel(ylabel)
+    plt.title(title,fontweight="bold")
+    plt.show()
+
