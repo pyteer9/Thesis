@@ -74,7 +74,7 @@ data = pd.DataFrame(st.fit_transform(data), columns=data.columns)
 data["Class"] = attack_cat
 '''
 #######################################################################
-MODEL IMPLEMENTATION
+MODEL IMPLEMENTATION   
 #######################################################################
 '''
 y_train = data["Class"]
