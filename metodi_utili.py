@@ -148,7 +148,7 @@ def LSTM_application(model, kfold, ros, data, data_X, y_train):
         # num_classes = len(outcomes_test)
         y_test_2 = dummies_test.values
 
-        model.fit(x_train_1, y_train_1, validation_data=(x_test_2, y_test_2), epochs=10)
+        model.fit(x_train_1, y_train_1, validation_data=(x_test_2, y_test_2), epochs=12)
 
         pred = model.predict(x_test_2)
         pred = np.argmax(pred, axis=1)
@@ -163,42 +163,42 @@ def LSTM_application(model, kfold, ros, data, data_X, y_train):
 
 def RandomForest_Model(clf,kfold, ros, data, data_X, y_train):
     oos_pred=[]
-    for train_index, test_index in kfold.split(data_X, y_train):
+    #for train_index, test_index in kfold.split(data_X, y_train):
         # Create a Gaussian Classifier
 
+    train_X, test_X, train_y, test_y = train_test_split(data_X, y_train, test_size = 0.2, random_state = 42)
 
-        train_X, test_X = data_X.iloc[train_index], data_X.iloc[test_index]
-        train_y, test_y = y_train.iloc[train_index], y_train.iloc[test_index]
+        #train_X, test_X = data_X.iloc[train_index], data_X.iloc[test_index]
+        #train_y, test_y = y_train.iloc[train_index], y_train.iloc[test_index]
 
-        print("train index:", train_index)
-        print("test index:", test_index)
-        print(train_y.value_counts())
 
-        train_X_over, train_y_over = ros.fit_resample(train_X, train_y)
-        print(train_y_over.value_counts())
+    print(train_y.value_counts())
 
-        x_columns_train = data.columns.drop('Class')
-        x_train_array = train_X_over[x_columns_train].values
+    train_X_over, train_y_over = ros.fit_resample(train_X, train_y)
+    print(train_y_over.value_counts())
 
-        dummies = pd.get_dummies(train_y_over)  # Classification
-        y_train_1 = dummies.values
+    x_columns_train = data.columns.drop('Class')
+    x_train_array = train_X_over[x_columns_train].values
 
-        x_columns_test = data.columns.drop('Class')
-        x_test_array = test_X[x_columns_test].values
+    dummies = pd.get_dummies(train_y_over)  # Classification
+    y_train_1 = dummies.values
 
-        dummies_test = pd.get_dummies(test_y)  # Classification
-        y_test_2 = dummies_test.values
+    x_columns_test = data.columns.drop('Class')
+    x_test_array = test_X[x_columns_test].values
 
-        # Train the model using the training sets y_pred=clf.predict(X_test)
-        clf.fit(x_train_array, y_train_1)
+    dummies_test = pd.get_dummies(test_y)  # Classification
+    y_test_2 = dummies_test.values
 
-        pred = clf.predict(x_test_array)
-        pred = np.argmax(pred, axis=1)
-        y_eval = np.argmax(y_test_2, axis=1)
-        score = metrics.accuracy_score(y_eval, pred)
+    # Train the model using the training sets y_pred=clf.predict(X_test)
+    clf.fit(x_train_array, y_train_1)
 
-        oos_pred.append(score)
-        print("Validation score: {}".format(score))
+    pred = clf.predict(x_test_array)
+    pred = np.argmax(pred, axis=1)
+    y_eval = np.argmax(y_test_2, axis=1)
+    score = metrics.accuracy_score(y_eval, pred)
+
+    oos_pred.append(score)
+    print("Validation score: {}".format(score))
 
     return oos_pred,y_eval, pred
 

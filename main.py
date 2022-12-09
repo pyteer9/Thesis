@@ -83,7 +83,7 @@ data_X = data.drop(["Class"],axis=1)
 
 ros = RandomOverSampler(sampling_strategy='minority')
 
-k_value = 2
+k_value = 10
 kfold = StratifiedKFold(n_splits=k_value, shuffle=True, random_state=42)
 kfold.get_n_splits(data_X,y_train)
 
@@ -98,10 +98,12 @@ while loop:
         model = metodi_utili.LSTM_model(data_X)
         oos_pred, y_eval, pred = metodi_utili.LSTM_application(model, kfold, ros, data, data_X, y_train)
         metodi_utili.show_confusion_matrix(y_eval, pred, "Confusion Matrix LSTM Model", "LSTM method")
+        for x in oos_pred:
+            print("\nThe final accuracy is: ",x)
 
     elif choose == "2":
           # Inizializing RandomForestClassifier
-          clf = RandomForestClassifier(n_estimators=10)
+          clf = RandomForestClassifier(n_estimators=500)
           oos_pred, y_eval, pred = metodi_utili.RandomForest_Model(clf,kfold, ros, data, data_X, y_train)
           metodi_utili.show_confusion_matrix(y_eval, pred,"Confusion Matrix Random Forest Classifier", "Random Forest Classification method")
 
