@@ -5,7 +5,7 @@
  ## Autore: Pietro URSO
  
  
- # Author
+ # Abstract
  
 Nessuno è al sicuro sul web, gli attacchi informatici sono sempre più frequenti e le aziende, soprattutto quelle di grandi dimensioni, sono sotto l'occhio dei cyber criminali. 
 
